@@ -1,0 +1,32 @@
+name: hermes-job-search
+
+services:
+  hermes:
+    build: .
+    image: hermes-job-search:local
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    restart: "no"
+    privileged: false
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      HERMES_HOME: /opt/data
+      CODEX_HOME: /opt/data/codex
+      HERMES_WRITE_SAFE_ROOT: /opt/data:/workspace
+      TEXMFVAR: /opt/data/texmf-var
+      XDG_CACHE_HOME: /opt/data/.cache
+      PUID: "${HJS_UID:-1000}"
+      PGID: "${HJS_GID:-1000}"
+    volumes:
+      - type: bind
+        source: ./.runtime/hermes
+        target: /opt/data
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./work
+        target: /workspace
+        bind:
+          create_host_path: false
